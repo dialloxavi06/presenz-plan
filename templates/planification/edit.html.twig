@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Planification{% endblock %}
+
+{% block body %}
+    <h1>Modifier la Planification</h1>
+    {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.start_datum) }}
+            {{ form_widget(form.start_datum, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(form.start_datum) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.end_date) }}
+            {{ form_widget(form.end_date, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(form.end_date) }}
+        </div>
+        <button type="submit" class="btn btn-success">Mettre à Jour</button>
+    {{ form_end(form) }}
+{% endblock %}

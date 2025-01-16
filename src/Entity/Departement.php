@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\DepartementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DepartementRepository::class)]
 class Departement
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue] 
     #[ORM\Column]
     private ?int $id = null;
 
@@ -19,11 +21,18 @@ class Departement
     #[ORM\Column(length: 255)]
     private ?string $ref = null;
 
-    #[ORM\ManyToOne(inversedBy: 'dpt')]
-    private ?Employee $employee = null;
+    /**
+     * @var Collection<int, Planification>
+     */
+    #[ORM\OneToMany(targetEntity: Planification::class, mappedBy: 'departement')]
+    private Collection $planifications;
 
-    #[ORM\ManyToOne(inversedBy: 'dpartment')]
-    private ?Planification $planification = null;
+    public function __construct()
+    {
+        $this->planifications = new ArrayCollection();
+    }
+
+    
 
     public function getId(): ?int
     {
@@ -54,27 +63,35 @@ class Departement
         return $this;
     }
 
-    public function getEmployee(): ?Employee
+    /**
+     * @return Collection<int, Planification>
+     */
+    public function getPlanifications(): Collection
     {
-        return $this->employee;
+        return $this->planifications;
     }
 
-    public function setEmployee(?Employee $employee): static
+    public function addPlanification(Planification $planification): static
     {
-        $this->employee = $employee;
+        if (!$this->planifications->contains($planification)) {
+            $this->planifications->add($planification);
+            $planification->setDepartement($this);
+        }
 
         return $this;
     }
 
-    public function getPlanification(): ?Planification
+    public function removePlanification(Planification $planification): static
     {
-        return $this->planification;
-    }
-
-    public function setPlanification(?Planification $planification): static
-    {
-        $this->planification = $planification;
+        if ($this->planifications->removeElement($planification)) {
+            // set the owning side to null (unless already changed)
+            if ($planification->getDepartement() === $this) {
+                $planification->setDepartement(null);
+            }
+        }
 
         return $this;
     }
+
+   
 }

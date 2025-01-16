@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 class Employee
 {
-    #[ORM\Id]
+    #[ORM\Id] 
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
@@ -25,17 +25,16 @@ class Employee
     private ?string $phone = null;
 
     /**
-     * @var Collection<int, Departement>
+     * @var Collection<int, Planification>
      */
-    #[ORM\OneToMany(targetEntity: Departement::class, mappedBy: 'employee')]
-    private Collection $dpt;
+    #[ORM\OneToMany(targetEntity: Planification::class, mappedBy: 'employee')]
+    private Collection $planifications;
 
-    #[ORM\ManyToOne(inversedBy: 'employe')]
-    private ?Planification $planification = null;
+  
 
     public function __construct()
     {
-        $this->dpt = new ArrayCollection();
+        $this->planifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,44 +79,34 @@ class Employee
     }
 
     /**
-     * @return Collection<int, Departement>
+     * @return Collection<int, Planification>
      */
-    public function getDpt(): Collection
+    public function getPlanifications(): Collection
     {
-        return $this->dpt;
+        return $this->planifications;
     }
 
-    public function addDpt(Departement $dpt): static
+    public function addPlanification(Planification $planification): static
     {
-        if (!$this->dpt->contains($dpt)) {
-            $this->dpt->add($dpt);
-            $dpt->setEmployee($this);
+        if (!$this->planifications->contains($planification)) {
+            $this->planifications->add($planification);
+            $planification->setEmployee($this);
         }
 
         return $this;
     }
 
-    public function removeDpt(Departement $dpt): static
+    public function removePlanification(Planification $planification): static
     {
-        if ($this->dpt->removeElement($dpt)) {
+        if ($this->planifications->removeElement($planification)) {
             // set the owning side to null (unless already changed)
-            if ($dpt->getEmployee() === $this) {
-                $dpt->setEmployee(null);
+            if ($planification->getEmployee() === $this) {
+                $planification->setEmployee(null);
             }
         }
 
         return $this;
     }
 
-    public function getPlanification(): ?Planification
-    {
-        return $this->planification;
-    }
-
-    public function setPlanification(?Planification $planification): static
-    {
-        $this->planification = $planification;
-
-        return $this;
-    }
+  
 }

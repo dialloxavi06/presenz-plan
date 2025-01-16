@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Employés de la Planification{% endblock %}
+
+{% block body %}
+    <h1>Employés pour la Planification {{ planification.id }}</h1>
+    <a href="{{ path('app_planification') }}" class="btn btn-secondary mb-3">Retour à la liste</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+                <tr>
+                    <td>{{ employee.id }}</td>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.email }}</td>
+                    <td>{{ employee.phone }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\StatusRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StatusRepository::class)]
@@ -13,17 +15,25 @@ class Status
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,nullable:true)]
     private ?string $statut = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $createdAt = null;
+    /**
+     * @var Collection<int, Planification>
+     */
+    #[ORM\OneToMany(targetEntity: Planification::class, mappedBy: 'status')]
+    private Collection $planifications;
 
-    #[ORM\ManyToOne(inversedBy: 'status')]
-    private ?Planification $planification = null;
+    public function __construct()
+    {
+        $this->planifications = new ArrayCollection();
+    }
+
+    
+
 
     public function getId(): ?int
-    {
+    { 
         return $this->id;
     }
 
@@ -39,27 +49,35 @@ class Status
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    /**
+     * @return Collection<int, Planification>
+     */
+    public function getPlanifications(): Collection
     {
-        return $this->createdAt;
+        return $this->planifications;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    public function addPlanification(Planification $planification): static
     {
-        $this->createdAt = $createdAt;
+        if (!$this->planifications->contains($planification)) {
+            $this->planifications->add($planification);
+            $planification->setStatus($this);
+        }
 
         return $this;
     }
 
-    public function getPlanification(): ?Planification
+    public function removePlanification(Planification $planification): static
     {
-        return $this->planification;
-    }
-
-    public function setPlanification(?Planification $planification): static
-    {
-        $this->planification = $planification;
+        if ($this->planifications->removeElement($planification)) {
+            // set the owning side to null (unless already changed)
+            if ($planification->getStatus() === $this) {
+                $planification->setStatus(null);
+            }
+        }
 
         return $this;
     }
+
+   
 }

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Planifications{% endblock %}
+
+{% block body %}
+    <h1>Liste des Planifications</h1>
+    <a href="{{ path('planification_create') }}" class="btn btn-primary mb-3">Créer une Planification</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date de Début</th>
+                <th>Date de Fin</th>
+                <th>Status</th>
+                <th>Jour</th>
+                <th>Employé</th>
+                <th>Département</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for planification in planifications %}
+                <tr>
+                    <td>{{ planification.id }}</td>
+                    <td>{{ planification.startDatum ? planification.startDatum|date('Y-m-d') : 'N/A' }}</td>
+                    <td>{{ planification.endDate ? planification.endDate|date('Y-m-d') : 'N/A' }}</td>
+                    <td>{{ planification.status ? planification.status.statut : 'N/A' }}</td>
+                    <td>{{ planification.employee ? planification.employee.name : 'N/A' }}</td>
+                    <td>{{ planification.departement ? planification.departement.name : 'N/A' }}</td>
+                    <td>
+                        <a href="{{ path('app_planification_edit', { id: planification.id }) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        <a href="{{ path('app_planification_employees', { id: planification.id }) }}" class="btn btn-sm btn-info">Voir Employés</a>
+                        <a href="{{ path('app_planification_delete', { id: planification.id }) }}" class="btn btn-sm btn-danger" 
+                           onclick="return confirm('Voulez-vous vraiment supprimer cette planification ?');">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
